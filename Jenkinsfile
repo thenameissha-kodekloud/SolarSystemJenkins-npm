@@ -7,8 +7,6 @@ pipeline {
                 sh 'node -v'
                 sh 'npm -v'
             }
-  
-            }
         }
-    }   
+    }
 }
