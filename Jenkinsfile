@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Dependency Scanning') {   // ← quotes required!
+        stage('Dependency Scanning') {
             parallel {
 
                 stage('NPM Dependencies Audit') {
@@ -26,10 +26,24 @@ pipeline {
 
                 stage('OWASP Dependency Check') {
                     steps {
-                        dependencyCheck additionalArguments: '--scan ./ --out ./ --format ALL --prettyPrint', odcInstallation: 'OWASP-DepCheck-10'
+                        dependencyCheck additionalArguments: '--scan ./ --out ./ --format ALL --prettyPrint --noupdate', odcInstallation: 'OWASP-DepCheck-10'
                     }
                 }
 
+            }
+        }
+
+        stage('Publish OWASP Report') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: './',
+                    reportFiles: 'dependency-check-jenkins.html',
+                    reportName: 'OWASP Report',
+                    reportTitles: ''
+                ])
             }
         }
 
