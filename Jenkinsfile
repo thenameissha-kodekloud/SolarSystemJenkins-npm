@@ -44,8 +44,8 @@ pipeline {
                     reportName: 'OWASP Report',
                     reportTitles: ''
                 ])
-
-                post {
+            }
+            post {                    // ← post is OUTSIDE steps, inside stage
                 always {
                     junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
                 }
