@@ -14,5 +14,15 @@ pipeline {
 
             }
         }
+
+        stage('NPM Dependencies audit') {
+            steps {
+
+                bat 'npm audit --audit-level=critical'
+                bat 'echo %ERRORLEVEL%'
+               
+
+            }            
+        }
     }
 }
