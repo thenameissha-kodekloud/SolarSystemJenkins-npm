@@ -44,6 +44,11 @@ pipeline {
                     reportName: 'OWASP Report',
                     reportTitles: ''
                 ])
+
+                post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
+                }
             }
         }
 
