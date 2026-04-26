@@ -8,9 +8,9 @@ pipeline {
         stage('VM Node version and npm version') {
             steps {
 
-                bat node -v
-                bat npm -v
-                bat npm install --no-audit
+                bat 'node -v'
+                bat 'npm -v'
+                bat 'npm install --no-audit'
 
             }
         }
