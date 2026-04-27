@@ -5,6 +5,10 @@ pipeline {
         nodejs 'nodejs-22-6-0'
     }
 
+    environment {
+        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+    }
+
     stages {
         stage('VM Node version and npm version') {
             steps {
@@ -14,22 +18,34 @@ pipeline {
             }
         }
 
+        stage('Unit Test') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials',
+                    passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                    bat 'npm test'                    // ✅ inside withCredentials block
+                }
+            }
+            post {                                   // ✅ post at stage level
+                always {
+                    junit allowEmptyResults: true, testResults: 'test-results.xml'
+                }
+            }
+        }
+
         stage('Dependency Scanning') {
             parallel {
-
                 stage('NPM Dependencies Audit') {
                     steps {
                         bat 'npm audit --audit-level=critical'
                         bat 'echo %ERRORLEVEL%'
                     }
                 }
-
                 stage('OWASP Dependency Check') {
                     steps {
-                        dependencyCheck additionalArguments: '--scan ./ --out ./ --format ALL --prettyPrint --noupdate', odcInstallation: 'OWASP-DepCheck-10'
+                        dependencyCheck additionalArguments: '--scan ./ --out ./ --format ALL --prettyPrint --noupdate',
+                            odcInstallation: 'OWASP-DepCheck-10'
                     }
                 }
-
             }
         }
 
@@ -45,12 +61,11 @@ pipeline {
                     reportTitles: ''
                 ])
             }
-            post {                    // ← post is OUTSIDE steps, inside stage
+            post {
                 always {
                     junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
                 }
             }
         }
-
     }
 }
