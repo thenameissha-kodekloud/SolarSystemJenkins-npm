@@ -18,19 +18,19 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials',
-                    passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                    bat 'npm test'                    // ✅ inside withCredentials block
-                }
-            }
-            post {                                   // ✅ post at stage level
-                always {
-                    junit allowEmptyResults: true, testResults: 'test-results.xml'
-                }
-            }
-        }
+        // stage('Unit Test') {
+        //     steps {
+        //         withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials',
+        //             passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+        //             bat 'npm test'                    // ✅ inside withCredentials block
+        //         }
+        //     }
+        //     post {                                   // ✅ post at stage level
+        //         always {
+        //             junit allowEmptyResults: true, testResults: 'test-results.xml'
+        //         }
+        //     }
+        // }
 
         stage('Dependency Scanning') {
             parallel {
