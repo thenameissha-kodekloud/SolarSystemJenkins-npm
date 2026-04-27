@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONGO_URI      = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONGO_DB_CREDS = credentials('mongo-db-credentials')
     }
 
     stages {
@@ -20,11 +21,11 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials',
-                    passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                            bat 'npm test || exit 0'    // ← force exit 0 so catchError can handle it
-                        }
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'npm test || exit 0'
+                    bat 'echo colon separated- %MONGO_DB_CREDS%'       // ✅ Windows uses %VAR%
+                    bat 'echo username - %MONGO_DB_CREDS_USR%'         // ✅ Windows uses %VAR%
+                    bat 'echo password - %MONGO_DB_CREDS_PSW%'         // ✅ Windows uses %VAR%
                 }
             }
             post {
@@ -33,6 +34,7 @@ pipeline {
                 }
             }
         }
+
         stage('Dependency Scanning') {
             parallel {
                 stage('NPM Dependencies Audit') {
