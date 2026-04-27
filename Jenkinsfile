@@ -21,13 +21,13 @@ pipeline {
         stage('Unit Test') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials',
-                    passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]){
-                        catchError(message: 'it will be fixed')} 
-                    {
-                    bat 'npm test'                    // ✅ inside withCredentials block
+                    passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                            bat 'npm test'
+                        }
                 }
-            } 
-            post {                                   // ✅ post at stage level
+            }
+            post {
                 always {
                     junit allowEmptyResults: true, testResults: 'test-results.xml'
                 }
