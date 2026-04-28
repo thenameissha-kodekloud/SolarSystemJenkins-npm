@@ -20,11 +20,11 @@ pipeline {
                 bat 'npm install --no-audit'
             }
         }
-        stage('Build Docker Image'){
-            steps{
-                bat 'docker build -t sharanv/sharanjenkins:$GIT_COMMIT'
-            }
+        stage('Build Docker Image') {
+        steps {
+            bat "docker build -t sharanv/sharanjenkins:%GIT_COMMIT% ."
         }
+    }
 
     }
 }
