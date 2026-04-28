@@ -46,23 +46,25 @@ pipeline {
             }
             post {
                 always {
-                    bat """
-                        trivy convert ^
-                            --format template --template "@C:/Program Files/trivy/contrib/html.tpl" ^
-                            --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        bat """
+                            trivy convert ^
+                                --format template --template "@C:\\Users\\Sharan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\contrib\\html.tpl" ^
+                                --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
 
-                        trivy convert ^
-                            --format template --template "@C:/Program Files/trivy/contrib/html.tpl" ^
-                            --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+                            trivy convert ^
+                                --format template --template "@C:\\Users\\Sharan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\contrib\\html.tpl" ^
+                                --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
 
-                        trivy convert ^
-                            --format template --template "@C:/Program Files/trivy/contrib/junit.tpl" ^
-                            --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+                            trivy convert ^
+                                --format template --template "@C:\\Users\\Sharan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\contrib\\junit.tpl" ^
+                                --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
 
-                        trivy convert ^
-                            --format template --template "@C:/Program Files/trivy/contrib/junit.tpl" ^
-                            --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-                    """
+                            trivy convert ^
+                                --format template --template "@C:\\Users\\Sharan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\contrib\\junit.tpl" ^
+                                --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+                        """
+                    }
 
                     junit allowEmptyResults: true, testResults: 'trivy-image-CRITICAL-results.xml'
                     junit allowEmptyResults: true, testResults: 'trivy-image-MEDIUM-results.xml'
