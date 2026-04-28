@@ -72,6 +72,14 @@ pipeline {
             }
         }
 
+        stage('Push Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-credentials', url: '') {
+                    bat "docker push sharanv/sharanjenkins:%GIT_COMMIT%"
+                }
+            }
+        }
+
     }
 
 }
